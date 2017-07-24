@@ -12,7 +12,7 @@ function IT_TEMPLATE (componentName, componentData) {
     return `
     it('snapshot', () => {
       const componentData = ${JSON.stringify(componentData)};
-      const component = renderer.create(<${componentName} {...{componentData}}/>)
+      const component = renderer.create(<${componentName} {...componentData}/>);
       const tree = component.toJSON();
       expect(tree).toMatchSnapshot();
     });
@@ -31,12 +31,12 @@ function DESCRIBE_TEMPLATE (componentName, componentDataArray, componentPath) {
     );
     const joinedItTemplate = itTemplates.join('\n');
     return `
-      const React = require('react');
-      const renderer = require('react-test-renderer');
-      const ${componentName} = require('${componentPath}');
-      describe('${componentName}', () => {
+    import React from 'react';
+    import renderer from 'react-test-renderer';
+    import ${componentName} from '${componentPath}';
+    describe('${componentName}', () => {
         ${joinedItTemplate}
-      })
+    });
   `;
 }
 

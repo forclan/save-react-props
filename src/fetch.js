@@ -10,19 +10,6 @@ const inject = fs.readFileSync(path.join(__dirname, '../assert/inject.js'));
 const getDataStr = getData.toString();
 const injectStr = inject.toString();
 
-function getCurrentTime () {
-    const rawStr = new Date().toJSON();
-    const timeStr = rawStr.replace(/[:]/gi, '-');
-    const timeInSec = timeStr.split('.')[0];
-    return timeInSec;
-}
-// input should be string
-function saveDataToFileByTime (data, fileName = getCurrentTime() + '.js') {
-    const saveData = `
-    module.exports = ${data}
-    `;
-    fs.writeFileSync(fileName, saveData);
-}
 /**
  * Launches a debugging instance of Chrome.
  * @param {boolean=} headless True (default) launches Chrome in headless mode.

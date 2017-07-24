@@ -3,8 +3,13 @@
 var fetchReactProps = require('./fetch');
 var readConfig = require('./readConfig');
 var path = require('path');
+const fs = require('fs');
 
 var program = require('commander');
+var savePropsData = require('./writeToFile').saveReactPropsData;
+var saveTestFile = require('./writeToFile').writeTestFile;
+const getComponentsObject = require('./getComponentsObject');
+const generateTemplatesByComponentsObj = require('./generateTemplatesByComponentsObj');
 
 (async function (params) {
     program
@@ -22,6 +27,7 @@ var program = require('commander');
     }
 
     const configPath = path.resolve(program.config);
+    const configDir = path.dirname(configPath);
     const config = readConfig(configPath);
 
     const urls = config.urls || [];
@@ -33,23 +39,37 @@ var program = require('commander');
         process.exit(0);
     }
 
-    let componentDatas;
+    let componentsData;
     if (dataFile) {
         let absoluteDataFile = path.join(path.dirname(configPath), dataFile);
         try {
-            componentDatas = require(absoluteDataFile);
+            componentsData = require(absoluteDataFile);
         } catch (err) {
             console.error(err);
             process.exit(0);
         }
     } else {
-        componentDatas = await fetchReactProps(urls[0]);
+        componentsData = await fetchReactProps(urls[0]);
+        if (!componentsData) {
+          console.log('从url地址获取的数据为空, 退出');
+          process.exit(0);
+        }
+        componentsData = JSON.parse(componentsData);
+        savePropsData(componentsData);
     }
 
-    if ( !componentData || JSON.stringify(componentDatas) === '{}') {
+    if ( !componentsData || JSON.stringify(componentsData) === '{}') {
       console.log('获取到的数据为空, 退出');
       process.exit(0);
     }
 
-    console.log(program.config);
+    if (JSON.stringify(Components) !== '{}') {
+      const componentsObj = getComponentsObject(Components, componentsData);
+      const componentsObjWithTest = generateTemplatesByComponentsObj(componentsObj);
+      componentsObjWithTest.map(componentsObj => {
+        let name = componentsObj.name;
+        saveTestFile(`${configDir}/${name}.test.js`, componentsObj.testTemplate);
+      });
+    }
+
 })();
