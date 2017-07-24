@@ -12,11 +12,18 @@ const getDataStr = getData.toString();
 const injectStr = inject.toString();
 // const storageStr = storage.toString();
 
+function getCurrentTime () {
+    const rawStr = new Date().toJSON();
+    const timeStr = rawStr.replace(/[:]/gi, '-');
+    const timeInSec = timeStr.split('.')[0];
+    return timeInSec;
+}
 // input should be string
-function saveDataToFileByTime (data) {
-    const time = new Date().toLocaleDateString();
-    const timeStr = time.replace(/\//g, '-');
-    fs.writeFileSync(timeStr, data);
+function saveDataToFileByTime (data, fileName = getCurrentTime() + '.js') {
+    const saveData = `
+    module.exports = ${data}
+    `;
+    fs.writeFileSync(fileName, saveData);
 }
 /**
  * Launches a debugging instance of Chrome.
@@ -47,15 +54,25 @@ async function fetchPropsData (url) {
 
     const { Page, Runtime, Console } = protocol;
 
+    async function getPropertiesResultByObjectId (objectId) {
+        return await Runtime.getProperties({
+            objectId: objectId,
+            ownProperities: true
+        });
+    }
+
+    async function getOwnEnumerablePropertiesByObjectId (objectId) {
+        const ownProperities = await getPropertiesResultByObjectId(objectId);
+        console.log('ownProperities', ownProperities);
+        return ownProperities.result.filter(val => val.enumerable);
+    }
+
     Console.messageAdded(val => {
         console.log(`console message:`, val);
     });
     await Page.enable();
     await Console.enable();
 
-    // Page.addScriptToEvaluateOnNewDocument({
-    //     source: storageStr
-    // });
     Page.domContentEventFired(() => {
         console.log('Page.domContentEventFired', Date.now());
     });
@@ -75,7 +92,8 @@ async function fetchPropsData (url) {
     console.log(`navigator to ${url}`);
 
     const storageGetAllItems = {
-        expression: `_storage.getAllItems()`,
+        expression: `_storage.getAllItemsByString()`,
+        generatePreview: true,
         returnByValue: true
     };
 
@@ -89,25 +107,19 @@ async function fetchPropsData (url) {
         // console.log('navi history', await Page.getNavigationHistory());
         console.log(`successfully loaded page: ${url}`);
 
-        // const objid = propsResult.result.objectId;
-        // console.log('objid', objid);
-        // const props = Runtime.getProperties({
-        //     objectId: objid,
-        //     ownProperties: true
-        // });
-        // console.log('props from objid', objid);
-        console.log('time start', Date.now());
         await sleep(1000);
-        propsResult = await Runtime.evaluate(storageGetAllItems);
-        console.log('time end', Date.now());
-        // const reactGlobalHook = await Runtime.evaluate(getReactEnable);
-        // console.log('react global: ', reactGlobalHook);
-        console.log(propsResult);
+        storageRemoteObj = await Runtime.evaluate(storageGetAllItems);
+        console.log('storageRemoteObj is', storageRemoteObj);
+        const storageResultRemoteObj = storageRemoteObj.result.value;
+        // const storageResultRemoteObj = await getOwnEnumerablePropertiesByObjectId(
+        //     storageRemoteObj.result.objectId
+        // );
+        console.log('storageResultRemoteObj', storageResultRemoteObj);
         console.log('saving data to file');
-        saveDataToFileByTime(JSON.stringify(propsResult['result']['value']));
+        saveDataToFileByTime(storageResultRemoteObj);
         console.log('after kill');
-        // protocol.close();
-        // chrome.kill();
+        protocol.close();
+        chrome.kill();
     });
 }
 

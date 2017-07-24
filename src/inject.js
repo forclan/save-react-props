@@ -20,6 +20,33 @@ class Storage {
     getAllItems () {
         return this._container;
     }
+
+    getAllItemsByString () {
+        return JSON.stringify(transformProperty(this._container));
+    }
+}
+
+function transformProperty (input, mapFnTo = '__function') {
+    if (input === null || input === undefined) {
+        return input;
+    }
+    if (typeof input === 'function') {
+        return mapFnTo;
+    }
+    if (typeof input === 'number' || typeof input === 'string') {
+        return input;
+    }
+    if (Array.isArray(input)) {
+        const transformPropertyWrapper = val => transformProperty(val);
+        return input.map(transformPropertyWrapper);
+    }
+    if (typeof input === 'object') {
+        let result = {};
+        Object.keys(input).map(key => {
+            result[key] = transformProperty(input[key]);
+        })
+        return result;
+    }
 }
 
 const _storage = new Storage();
