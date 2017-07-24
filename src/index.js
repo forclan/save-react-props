@@ -15,4 +15,4 @@ if (!url) {
   process.exit(0);
 }
 
-fetchReactProps(url);
+fetchReactProps(url).then(console.log);

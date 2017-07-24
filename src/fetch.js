@@ -95,26 +95,18 @@ async function fetchPropsData (url) {
         returnByValue: true
     };
 
-    const getReactEnable = {
-        expression: `__REACT_DEVTOOLS_GLOBAL_HOOK__`,
-        returnByValue: true
-    };
-
-    Page.loadEventFired(async () => {
-        console.log('loadEventFired', Date.now());
-        console.log(`successfully loaded page: ${url}`);
-
-        await sleep(1000);
-        storageRemoteObj = await Runtime.evaluate(storageGetAllItems);
-        const storageResultRemoteObj = storageRemoteObj.result.value;
-
-        console.log('saving data to file');
-        saveDataToFileByTime(storageResultRemoteObj);
-        console.log('kill chrome process');
-        protocol.close();
-        chrome.kill();
+    return new Promise((resolve, reject) => {
+        Page.loadEventFired(async () => {
+            console.log('loadEventFired', Date.now());
+            console.log(`successfully loaded page: ${url}`);
+            await sleep(1000);
+            storageRemoteObj = await Runtime.evaluate(storageGetAllItems);
+            const storageResultRemoteObj = storageRemoteObj.result.value;
+            resolve(storageResultRemoteObj);
+            protocol.close();
+            chrome.kill();
+        });
     });
 }
-
 
 module.exports = fetchPropsData;
