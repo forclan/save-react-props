@@ -1,4 +1,5 @@
 const fs = require('fs');
+const path = require('path');
 const prettier = require('prettier');
 
 const format = data =>
@@ -37,19 +38,22 @@ function getCurrentTime () {
 }
 
 // input should be string
-function saveDataToFileByTime (data, filename = getCurrentTime() + '.js') {
+function saveDataToFileByTime (data, fileDir = '', filename = getCurrentTime() + '.js') {
+    console.log('fileDir', fileDir);
+    const fileSaveTo = path.join(fileDir, filename);
     const saveData = `
     module.exports = ${data}
     `;
     try {
         const formatedData = format(saveData);
-        fs.writeFileSync(filename, formatedData);
+        fs.writeFileSync(fileSaveTo, formatedData);
     } catch (err) {
-        fs.writeFileSync(filename, saveData);
+        fs.writeFileSync(fileSaveTo, saveData);
     }
 }
 
 module.exports = {
     writeTestFile,
+    getCurrentTime,
     saveReactPropsData: saveDataToFileByTime
 };

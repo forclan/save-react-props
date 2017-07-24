@@ -12,6 +12,24 @@ const getComponentsObject = require('./getComponentsObject');
 const generateTemplatesByComponentsObj = require('./generateTemplatesByComponentsObj');
 const mapFnStrToFunction = require('./mapFnStrToFunction');
 
+function mergeComponentData (componentDataArray) {
+  let result = {};
+  componentDataArray.map(componentsData => {
+    let componentNames = Object.keys(componentsData);
+    componentNames.map(componentName => {
+      console.log('result[componentName]', result[componentName]);
+      if (result[componentName]) {
+        console.log('true', result[componentName]);
+        result[componentName].push(...componentsData[componentName]);
+      } else {
+        console.log('fale', result[componentName]);
+        result[componentName] = componentsData[componentName];
+      }
+    });
+  });
+  return result;
+}
+
 (async function (params) {
     program
         .version('0.1.0')
@@ -50,14 +68,18 @@ const mapFnStrToFunction = require('./mapFnStrToFunction');
             process.exit(0);
         }
     } else {
-        componentsData = await fetchReactProps(urls[0]);
-        console.log('componentsData', componentsData);
-        if (!componentsData) {
+        let dataContainer = [];
+        for (let i = 0; i < urls.length; i++) {
+          let tmpComponentData = await fetchReactProps(urls[i]);
+          console.log(tmpComponentData);
+          dataContainer.push(JSON.parse(tmpComponentData));
+        }
+        componentsData = mergeComponentData(dataContainer);
+        if (componentsData === '{}') {
           console.log('从url地址获取的数据为空, 退出');
           process.exit(0);
         }
-        savePropsData(componentsData);
-        componentsData = JSON.parse(componentsData);
+        savePropsData(JSON.stringify(componentsData), configDir);
     }
 
     if ( !componentsData || JSON.stringify(componentsData) === '{}') {
