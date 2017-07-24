@@ -1,5 +1,10 @@
 const fs = require('fs');
+const prettier = require('prettier');
 
+const format = data =>
+    prettier.format(data, {
+        singleQuote: true
+    });
 function writeTestFile (filename, data) {
     if (typeof data !== 'string') {
         console.error(
@@ -14,9 +19,14 @@ function writeTestFile (filename, data) {
     `;
     const isFileExists = fs.existsSync(filename);
     if (isFileExists) {
-      filename = filename.replace(/\.test.js/, '1.test.js')
+        filename = filename.replace(/\.test.js/, '1.test.js');
     }
-    fs.writeFileSync(filename, writeData);
+    try {
+        const formatedData = format(saveData);
+        fs.writeFileSync(fileName, formatedData);
+    } catch (err) {
+        fs.writeFileSync(fileName, saveData);
+    }
 }
 
 function getCurrentTime () {
@@ -31,7 +41,12 @@ function saveDataToFileByTime (data, fileName = getCurrentTime() + '.js') {
     const saveData = `
     module.exports = ${data}
     `;
-    fs.writeFileSync(fileName, saveData);
+    try {
+        const formatedData = format(saveData);
+        fs.writeFileSync(fileName, formatedData);
+    } catch (err) {
+        fs.writeFileSync(fileName, saveData);
+    }
 }
 
 module.exports = {
