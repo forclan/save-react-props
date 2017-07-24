@@ -4,8 +4,8 @@ const CDP = require('chrome-remote-interface');
 const fs = require('fs');
 const path = require('path');
 
-const getData = fs.readFileSync(path.join(__dirname, '../assert/getData.js'));
-const inject = fs.readFileSync(path.join(__dirname, '../assert/inject.js'));
+const getData = fs.readFileSync(path.join(__dirname, '../assets/getData.js'));
+const inject = fs.readFileSync(path.join(__dirname, '../assets/inject.js'));
 
 const getDataStr = getData.toString();
 const injectStr = inject.toString();
