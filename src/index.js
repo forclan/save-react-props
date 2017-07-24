@@ -54,8 +54,8 @@ const generateTemplatesByComponentsObj = require('./generateTemplatesByComponent
           console.log('从url地址获取的数据为空, 退出');
           process.exit(0);
         }
-        componentsData = JSON.parse(componentsData);
         savePropsData(componentsData);
+        componentsData = JSON.parse(componentsData);
     }
 
     if ( !componentsData || JSON.stringify(componentsData) === '{}') {

@@ -56,7 +56,7 @@ async function fetchPropsData (url) {
         console.log(`console message:`, val);
     });
     await Page.enable();
-    await Console.enable();
+    // await Console.enable();
 
     Page.domContentEventFired(() => {
         console.log('Page.domContentEventFired', Date.now());
