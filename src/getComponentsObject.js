@@ -16,9 +16,6 @@ function generateComponentObj (componentName, componentPath, allComponentData) {
     }
 
     const componentData = allComponentData[componentName];
-    // console.log('allComponnets', allComponentData);
-    console.log('componentName', componentName);
-    console.log('componentData', componentData);
     return {
         name: componentName,
         componentPath: componentPath,

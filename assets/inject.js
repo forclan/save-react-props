@@ -26,7 +26,7 @@ class Storage {
     }
 }
 
-function transformProperty (input, mapFnTo = '__function') {
+function transformProperty (input, mapFnTo = '___function___') {
     if (input === null || input === undefined) {
         return input;
     }

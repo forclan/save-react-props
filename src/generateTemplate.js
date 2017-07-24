@@ -9,9 +9,12 @@ describe('Article', () => {
 `;
 
 function IT_TEMPLATE (componentName, componentData) {
+    const componentStr = JSON.stringify(componentData);
+    // 将___function___替换成function() {}以防错误
+    const replacedComponentStr = componentStr.replace(/"___function___"/gi, 'function () {}');
     return `
     it('snapshot', () => {
-      const componentData = ${JSON.stringify(componentData)};
+      const componentData = ${replacedComponentStr};
       const component = renderer.create(<${componentName} {...componentData}/>);
       const tree = component.toJSON();
       expect(tree).toMatchSnapshot();

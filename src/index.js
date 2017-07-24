@@ -10,6 +10,7 @@ var savePropsData = require('./writeToFile').saveReactPropsData;
 var saveTestFile = require('./writeToFile').writeTestFile;
 const getComponentsObject = require('./getComponentsObject');
 const generateTemplatesByComponentsObj = require('./generateTemplatesByComponentsObj');
+const mapFnStrToFunction = require('./mapFnStrToFunction');
 
 (async function (params) {
     program
@@ -50,6 +51,7 @@ const generateTemplatesByComponentsObj = require('./generateTemplatesByComponent
         }
     } else {
         componentsData = await fetchReactProps(urls[0]);
+        console.log('componentsData', componentsData);
         if (!componentsData) {
           console.log('从url地址获取的数据为空, 退出');
           process.exit(0);
