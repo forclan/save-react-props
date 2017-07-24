@@ -17,12 +17,9 @@ function mergeComponentData (componentDataArray) {
   componentDataArray.map(componentsData => {
     let componentNames = Object.keys(componentsData);
     componentNames.map(componentName => {
-      console.log('result[componentName]', result[componentName]);
       if (result[componentName]) {
-        console.log('true', result[componentName]);
         result[componentName].push(...componentsData[componentName]);
       } else {
-        console.log('fale', result[componentName]);
         result[componentName] = componentsData[componentName];
       }
     });
@@ -71,11 +68,10 @@ function mergeComponentData (componentDataArray) {
         let dataContainer = [];
         for (let i = 0; i < urls.length; i++) {
           let tmpComponentData = await fetchReactProps(urls[i]);
-          console.log(tmpComponentData);
           dataContainer.push(JSON.parse(tmpComponentData));
         }
         componentsData = mergeComponentData(dataContainer);
-        if (componentsData === '{}') {
+        if (JSON.stringify(componentsData) === '{}') {
           console.log('从url地址获取的数据为空, 退出');
           process.exit(0);
         }

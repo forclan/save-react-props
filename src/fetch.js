@@ -72,7 +72,7 @@ async function fetchPropsData (url) {
     const frameId = await Page.navigate({
         url
     });
-    console.log('frameId is:', frameId);
+    // console.log('frameId is:', frameId);
 
     console.log(`navigator to ${url}`);
 
@@ -85,7 +85,7 @@ async function fetchPropsData (url) {
     return new Promise((resolve, reject) => {
         Page.loadEventFired(async () => {
             console.log('loadEventFired', Date.now());
-            console.log(`successfully loaded page: ${url}`);
+            console.log(`successfully loaded page`);
             await sleep(1000);
             storageRemoteObj = await Runtime.evaluate(storageGetAllItems);
             const storageResultRemoteObj = storageRemoteObj.result.value;
