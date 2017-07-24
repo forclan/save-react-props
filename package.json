@@ -4,12 +4,20 @@
   "description": "save react props",
   "main": "index.js",
   "scripts": {
+    "build": "rollup -c",
     "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "bin": {
+    "fetch-react-props": "src/index.js"
   },
   "author": "",
   "license": "ISC",
   "dependencies": {
     "chrome-launcher": "^0.3.2",
-    "chrome-remote-interface": "^0.24.2"
+    "chrome-remote-interface": "^0.24.2",
+    "commander": "^2.11.0"
+  },
+  "devDependencies": {
+    "rollup-plugin-node-resolve": "^3.0.0"
   }
 }
