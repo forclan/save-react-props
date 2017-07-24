@@ -52,13 +52,25 @@ function transformProperty (input, mapFnTo = '__function') {
 const _storage = new Storage();
 window._storage = _storage;
 
+
+window.__REACT_DEVTOOLS_GLOBAL_HOOK__ = {
+    inject: function (methodFromReactDom) {
+        window.ReactMethods = methodFromReactDom;
+
+        if (ReactMethods.Reconciler) {
+            let mountComponent = ReactMethods.Reconciler.mountComponent;
+            ReactMethods.Reconciler.mountComponent = function () {
+                let result = mountComponent.apply(this, arguments);
+                injectMountFunction.apply(this, arguments);
+                return result;
+            };
+        }
+    }
+};
+
 function injectMountFunction (internalInstance, rootID, transaction, context) {
     const componentData = getData(internalInstance);
     if (isReactComponent(componentData)) {
-        // console.log(
-        //     componentData.name,
-        //     getEnumableDataInObject(componentData.props)
-        // );
         _storage.setItem(
             componentData.name,
             getEnumableDataInObject(componentData.props)
@@ -86,20 +98,3 @@ function getEnumableDataInObject (obj) {
     });
     return result;
 }
-
-console.log('window: ' + window);
-console.log('window.href:' + window.href);
-window.__REACT_DEVTOOLS_GLOBAL_HOOK__ = {
-    inject: function (methodFromReactDom) {
-        window.ReactMethods = methodFromReactDom;
-
-        if (ReactMethods.Reconciler) {
-            let mountComponent = ReactMethods.Reconciler.mountComponent;
-            ReactMethods.Reconciler.mountComponent = function () {
-                let result = mountComponent.apply(this, arguments);
-                injectMountFunction.apply(this, arguments);
-                return result;
-            };
-        }
-    }
-};
