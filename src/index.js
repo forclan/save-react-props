@@ -6,11 +6,9 @@ const path = require('path');
 
 const getData = fs.readFileSync(path.join(__dirname, './getData.js'));
 const inject = fs.readFileSync(path.join(__dirname, './inject.js'));
-// const storage = fs.readFileSync(path.join(__dirname, './storage.js'));
 
 const getDataStr = getData.toString();
 const injectStr = inject.toString();
-// const storageStr = storage.toString();
 
 function getCurrentTime () {
     const rawStr = new Date().toJSON();
@@ -104,20 +102,15 @@ async function fetchPropsData (url) {
 
     Page.loadEventFired(async () => {
         console.log('loadEventFired', Date.now());
-        // console.log('navi history', await Page.getNavigationHistory());
         console.log(`successfully loaded page: ${url}`);
 
         await sleep(1000);
         storageRemoteObj = await Runtime.evaluate(storageGetAllItems);
-        console.log('storageRemoteObj is', storageRemoteObj);
         const storageResultRemoteObj = storageRemoteObj.result.value;
-        // const storageResultRemoteObj = await getOwnEnumerablePropertiesByObjectId(
-        //     storageRemoteObj.result.objectId
-        // );
-        console.log('storageResultRemoteObj', storageResultRemoteObj);
+
         console.log('saving data to file');
         saveDataToFileByTime(storageResultRemoteObj);
-        console.log('after kill');
+        console.log('kill chrome process');
         protocol.close();
         chrome.kill();
     });
@@ -128,5 +121,5 @@ const u =
 const r = 'http://todomvc.com/examples/react/';
 const r1 = 'http://dreyescat.github.io/react-rating/';
 const r2 = 'http://mzabriskie.github.io/react-example/';
-fetchPropsData(r2);
+fetchPropsData(u);
 // fetchPropsData('http://localhost:3000');
