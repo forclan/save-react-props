@@ -22,10 +22,10 @@ function writeTestFile (filename, data) {
         filename = filename.replace(/\.test.js/, '1.test.js');
     }
     try {
-        const formatedData = format(saveData);
-        fs.writeFileSync(fileName, formatedData);
+        const formatedData = format(writeData);
+        fs.writeFileSync(filename, formatedData);
     } catch (err) {
-        fs.writeFileSync(fileName, saveData);
+        fs.writeFileSync(filename, writeData);
     }
 }
 
@@ -37,15 +37,15 @@ function getCurrentTime () {
 }
 
 // input should be string
-function saveDataToFileByTime (data, fileName = getCurrentTime() + '.js') {
+function saveDataToFileByTime (data, filename = getCurrentTime() + '.js') {
     const saveData = `
     module.exports = ${data}
     `;
     try {
         const formatedData = format(saveData);
-        fs.writeFileSync(fileName, formatedData);
+        fs.writeFileSync(filename, formatedData);
     } catch (err) {
-        fs.writeFileSync(fileName, saveData);
+        fs.writeFileSync(filename, saveData);
     }
 }
 
